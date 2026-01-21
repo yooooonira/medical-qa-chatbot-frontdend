@@ -1,7 +1,10 @@
 // api/websocket.ts
 let socket: WebSocket | null = null;
 
-const WS_URL = import.meta.env.VITE_WS_URL ?? "ws://localhost:8000/ws/inference";
+import.meta.env.VITE_WS_URL
+
+const WS_URL =
+  import.meta.env.VITE_WS_URL ?? "ws://localhost:8000/ws/inference";
 
 type MessageHandler = (data: any) => void;
 type ErrorHandler = (e: Event) => void;
@@ -12,8 +15,16 @@ export function connectWS(
   onOpen?: () => void,
   onClose?: () => void
 ) {
-  // 중복 연결 방지
-  if (socket && socket.readyState === WebSocket.OPEN) return;
+  // 이미 열려 있으면 onOpen 호출만 하고 종료
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    onOpen?.();
+    return;
+  }
+
+  // 연결 중이면 새로 만들지 않음
+  if (socket && socket.readyState === WebSocket.CONNECTING) {
+    return;
+  }
 
   socket = new WebSocket(WS_URL);
 
@@ -26,7 +37,7 @@ export function connectWS(
     try {
       const data = JSON.parse(event.data);
       onMessage(data);
-    } catch (e) {
+    } catch {
       console.error("[WS] invalid message", event.data);
     }
   };

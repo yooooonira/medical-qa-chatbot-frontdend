@@ -1,4 +1,3 @@
-// hooks/useChatSocket.ts
 import { useEffect, useState } from "react";
 import { connectWS, sendQuestion } from "@/api/websocket";
 
@@ -10,6 +9,7 @@ export function useChatSocket() {
 
   useEffect(() => {
     connectWS(
+      // onMessage
       (data) => {
         if (data.type === "answer") {
           setMessages((prev) => [...prev, data.content]);
@@ -21,13 +21,20 @@ export function useChatSocket() {
           setIsLoading(false);
         }
       },
+
+      // onError
       () => {
-        setError("WebSocket error");
+        setError("WebSocket 연결 오류");
+        setIsConnected(false);
         setIsLoading(false);
       },
+
+      // ✅ onOpen (이게 핵심)
       () => {
         setIsConnected(true);
       },
+
+      // onClose
       () => {
         setIsConnected(false);
         setIsLoading(false);

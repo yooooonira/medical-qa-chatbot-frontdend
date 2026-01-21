@@ -13,10 +13,6 @@ function Chat() {
     sendMessage,
   } = useChatSocket();
 
-  // 가장 최근 답변만 사용
-  const latestAnswer =
-    messages.length > 0 ? messages[messages.length - 1] : "";
-
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* 상단 헤더 */}
@@ -65,41 +61,31 @@ function Chat() {
 
         {/* 답변 결과 카드 */}
         <div className="bg-white border rounded-lg p-5 min-h-[200px]">
-          {isLoading && (
-            <div className="text-sm text-gray-400">
-              답변을 생성 중입니다...
-            </div>
-          )}
-
-          {!isLoading && !latestAnswer && (
-            <div className="text-sm text-gray-400">
-              
-            </div>
-          )}
-
           <div className="space-y-4">
-  {messages.length === 0 && !isLoading && (
-    <div className="text-sm text-gray-400">
-      의료 관련 질문을 입력해 주세요.
-    </div>
-  )}
+            {/* 초기 안내 */}
+            {messages.length === 0 && !isLoading && (
+              <div className="text-sm text-gray-400">
+                의료 관련 질문을 입력해 주세요.
+              </div>
+            )}
 
-  {messages.map((answer, idx) => (
-    <div
-      key={idx}
-      className="border-b last:border-b-0 pb-4 text-sm text-gray-800 whitespace-pre-line"
-    >
-      {answer}
-    </div>
-  ))}
+            {/* 답변 목록 */}
+            {messages.map((answer, idx) => (
+              <div
+                key={idx}
+                className="border-b last:border-b-0 pb-4 text-sm text-gray-800 whitespace-pre-line"
+              >
+                {answer}
+              </div>
+            ))}
 
-  {isLoading && (
-    <div className="text-sm text-gray-400">
-      답변을 생성 중입니다...
-    </div>
-  )}
-</div>
-
+            {/* ✅ 로딩 문구는 여기 한 번만 */}
+            {isLoading && (
+              <div className="text-sm text-gray-400">
+                답변을 생성 중입니다...
+              </div>
+            )}
+          </div>
         </div>
 
         {/* 에러 */}
